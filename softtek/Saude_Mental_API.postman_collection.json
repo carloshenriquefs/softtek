@@ -1,0 +1,822 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "API Saúde Mental - Conformidade NR-1",
+		"description": "Coleção completa para testar a API de Saúde Mental empresarial\n\n**Funcionalidades:**\n- Autenticação JWT\n- Avaliações de Saúde Mental\n- Recursos de Apoio\n- Auditoria e Conformidade NR-1\n\n**Usuários de Teste:**\n- Admin: admin@empresa.com / admin123\n- RH: rh@empresa.com / rh123\n- Funcionário: funcionario@empresa.com / func123",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "🔐 Autenticação",
+			"item": [
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('admin_token', response.accessToken);",
+									"    pm.environment.set('admin_refresh_token', response.refreshToken);",
+									"    pm.test('Login realizado com sucesso', () => {",
+									"        pm.expect(response.accessToken).to.not.be.empty;",
+									"        pm.expect(response.user.role).to.eql('ADMIN');",
+									"    });",
+									"} else {",
+									"    pm.test('Erro no login', () => {",
+									"        pm.expect.fail('Login falhou');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@empresa.com\",\n  \"password\": \"admin123\",\n  \"deviceInfo\": \"Postman Test Client\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - RH",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('hr_token', response.accessToken);",
+									"    pm.environment.set('hr_refresh_token', response.refreshToken);",
+									"    pm.test('Login RH realizado com sucesso', () => {",
+									"        pm.expect(response.accessToken).to.not.be.empty;",
+									"        pm.expect(response.user.role).to.eql('HR');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"rh@empresa.com\",\n  \"password\": \"rh123\",\n  \"deviceInfo\": \"Postman Test Client\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login - Funcionário",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('employee_token', response.accessToken);",
+									"    pm.environment.set('employee_refresh_token', response.refreshToken);",
+									"    pm.test('Login funcionário realizado com sucesso', () => {",
+									"        pm.expect(response.accessToken).to.not.be.empty;",
+									"        pm.expect(response.user.role).to.eql('EMPLOYEE');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"funcionario@empresa.com\",\n  \"password\": \"func123\",\n  \"deviceInfo\": \"Postman Test Client\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('employee_token', response.accessToken);",
+									"    pm.test('Token renovado com sucesso', () => {",
+									"        pm.expect(response.accessToken).to.not.be.empty;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{employee_refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obter Perfil do Usuário",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Perfil retornado com sucesso', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.email).to.not.be.empty;",
+									"    pm.expect(response.name).to.not.be.empty;",
+									"    pm.expect(response.role).to.not.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🧠 Avaliações de Saúde Mental",
+			"item": [
+				{
+					"name": "Obter Todas as Perguntas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Perguntas retornadas com sucesso', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const questions = pm.response.json();",
+									"    pm.expect(questions).to.be.an('array');",
+									"    if (questions.length > 0) {",
+									"        pm.expect(questions[0]).to.have.property('text');",
+									"        pm.expect(questions[0]).to.have.property('type');",
+									"        pm.expect(questions[0]).to.have.property('category');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/assessments/questions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments",
+								"questions"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obter Perguntas por Categoria - Estresse",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/assessments/questions?category=STRESS_LEVEL",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments",
+								"questions"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "STRESS_LEVEL"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Submeter Avaliação - Nível Baixo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('assessment_id', response.id);",
+									"    pm.test('Avaliação submetida com sucesso', () => {",
+									"        pm.expect(response.id).to.not.be.empty;",
+									"        pm.expect(response.score).to.be.a('number');",
+									"        pm.expect(response.riskLevel).to.not.be.empty;",
+									"        pm.expect(response.recommendations).to.be.an('array');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"STRESS_LEVEL\",\n  \"responses\": {\n    \"stress_level\": 2,\n    \"workload_feeling\": \"raramente\",\n    \"sleep_quality\": 4,\n    \"work_satisfaction\": 4,\n    \"team_support\": \"sim\"\n  },\n  \"deviceInfo\": \"Postman Test\",\n  \"completionTime\": \"PT5M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Submeter Avaliação - Nível Alto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"STRESS_LEVEL\",\n  \"responses\": {\n    \"stress_level\": 5,\n    \"workload_feeling\": \"sempre\",\n    \"sleep_quality\": 1,\n    \"work_satisfaction\": 2,\n    \"team_support\": \"não\",\n    \"burnout_symptoms\": \"frequentemente\"\n  },\n  \"deviceInfo\": \"Postman Test\",\n  \"completionTime\": \"PT8M\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Listar Minhas Avaliações",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Avaliações listadas com sucesso', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const assessments = pm.response.json();",
+									"    pm.expect(assessments).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obter Avaliação Específica",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/assessments/{{assessment_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments",
+								"{{assessment_id}}"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📚 Recursos de Apoio",
+			"item": [
+				{
+					"name": "Listar Todos os Recursos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Recursos listados com sucesso', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const resources = pm.response.json();",
+									"    pm.expect(resources).to.be.an('array');",
+									"    if (resources.length > 0) {",
+									"        pm.expect(resources[0]).to.have.property('title');",
+									"        pm.expect(resources[0]).to.have.property('description');",
+									"        pm.expect(resources[0]).to.have.property('type');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/resources",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resources"
+							]
+						}
+					}
+				},
+				{
+					"name": "Recursos em Destaque",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/resources?featured=true",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resources"
+							],
+							"query": [
+								{
+									"key": "featured",
+									"value": "true"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Recursos por Tipo - Hotline",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/resources?type=HOTLINE",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resources"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "HOTLINE"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Recursos por Nível de Risco - Alto",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/resources?riskLevel=HIGH",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resources"
+							],
+							"query": [
+								{
+									"key": "riskLevel",
+									"value": "HIGH"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Recursos por Categoria - Estresse",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{employee_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/resources?category=STRESS_LEVEL",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"resources"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "STRESS_LEVEL"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏥 Health Check & Monitoramento",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('API está funcionando', () => {",
+									"    pm.response.to.have.status(200);",
+									"    const health = pm.response.json();",
+									"    pm.expect(health.status).to.eql('UP');",
+									"    pm.expect(health.service).to.eql('Saúde Mental API');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					}
+				},
+				{
+					"name": "Actuator Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/actuator/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔍 Testes de Segurança",
+			"item": [
+				{
+					"name": "Acesso Negado - Sem Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Acesso negado sem token', () => {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Acesso Negado - Token Inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Acesso negado com token inválido', () => {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer token_invalido_123"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/assessments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"assessments"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login com Credenciais Inválidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Login negado com credenciais inválidas', () => {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"usuario@inexistente.com\",\n  \"password\": \"senha_errada\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script executado antes de cada requisição",
+					"// Você pode adicionar lógica global aqui"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Testes globais executados após cada requisição",
+					"pm.test('Response time is less than 5000ms', () => {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"// Log da resposta para debug (comentar em produção)",
+					"// console.log('Response:', pm.response.text());"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		}
+	]
+}
+

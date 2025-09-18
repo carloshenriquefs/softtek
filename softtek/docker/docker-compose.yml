@@ -1,8 +1,41 @@
+version: '3.8'
+
 services:
   mongodb:
-    image: mongo
+    image: mongo:7.0
+    container_name: saude-mental-mongodb
+    restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=123
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: saude_mental
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - saude-mental-network
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: saude-mental-mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    networks:
+      - saude-mental-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  saude-mental-network:
+    driver: bridge

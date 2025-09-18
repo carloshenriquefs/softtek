@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: saude-mental-api
+
+  main:
+    allow-circular-references: true
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://admin:password123@localhost:27017/saude_mental?authSource=admin}
+      auto-index-creation: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080}
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secret: ${JWT_SECRET:suaChaveSecretaMuitoSeguraComMaisDe256BitsParaTesteLocalhost123456789}
+  expiration: ${JWT_EXPIRATION:86400000} # 24 horas em ms
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 dias em ms
+
+logging:
+  level:
+    com.saudemental.api: INFO
+    org.springframework.security: INFO
+    org.springframework.data.mongodb: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{userId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{userId}] %logger{36} - %msg%n"
+  file:
+    name: logs/saude-mental-api.log
+
+audit:
+  enabled: true
+  retention-days: ${AUDIT_RETENTION_DAYS:2555} # 7 anos para conformidade NR-1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
