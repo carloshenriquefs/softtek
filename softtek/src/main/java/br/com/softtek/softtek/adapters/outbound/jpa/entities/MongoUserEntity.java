@@ -1,7 +1,7 @@
 package br.com.softtek.softtek.adapters.outbound.jpa.entities;
 
 import br.com.softtek.softtek.domain.user.User;
-import br.com.softtek.softtek.domain.user.UserRole;
+import br.com.softtek.softtek.domain.user.enums.UserRole;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Document(collection = "users")
-public class JpaUserEntity implements UserDetails {
+public class MongoUserEntity implements UserDetails {
 
     @Id
     private String id;
@@ -21,10 +21,10 @@ public class JpaUserEntity implements UserDetails {
     private String password;
     private UserRole role;
 
-    public JpaUserEntity() {
+    public MongoUserEntity() {
     }
 
-    public JpaUserEntity(String id, String username, String email, String password, UserRole role) {
+    public MongoUserEntity(String id, String username, String email, String password, UserRole role) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -32,7 +32,7 @@ public class JpaUserEntity implements UserDetails {
         this.role = role;
     }
 
-    public JpaUserEntity(User user) {
+    public MongoUserEntity(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
@@ -44,37 +44,37 @@ public class JpaUserEntity implements UserDetails {
         return id;
     }
 
-    public JpaUserEntity setId(String id) {
+    public MongoUserEntity setId(String id) {
         this.id = id;
         return this;
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 
-    public JpaUserEntity setUsername(String username) {
+    public MongoUserEntity setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -83,7 +83,7 @@ public class JpaUserEntity implements UserDetails {
         return email;
     }
 
-    public JpaUserEntity setEmail(String email) {
+    public MongoUserEntity setEmail(String email) {
         this.email = email;
         return this;
     }
@@ -96,16 +96,19 @@ public class JpaUserEntity implements UserDetails {
                     new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_USER")
             );
+        } else {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
         }
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
-    public JpaUserEntity setPassword(String password) {
+    public MongoUserEntity setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -114,7 +117,7 @@ public class JpaUserEntity implements UserDetails {
         return role;
     }
 
-    public JpaUserEntity setRole(UserRole role) {
+    public MongoUserEntity setRole(UserRole role) {
         this.role = role;
         return this;
     }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Data
 @Document(collection = "form_responses")
-public class JpaFormResponseEntity {
+public class MongoFormResponseEntity {
 
     @Id
     private String id;

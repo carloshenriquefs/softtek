@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Document(collection = "forms")
-public class JpaFormEntity {
+public class MongoFormEntity {
 
     @Id
     private String id;
