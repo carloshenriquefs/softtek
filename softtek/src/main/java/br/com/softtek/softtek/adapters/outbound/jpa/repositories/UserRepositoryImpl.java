@@ -2,25 +2,23 @@ package br.com.softtek.softtek.adapters.outbound.jpa.repositories;
 
 import br.com.softtek.softtek.domain.user.User;
 import br.com.softtek.softtek.domain.user.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserRepositoryImpl implements UserRepository {
 
-    private final JpaUserRepository jpaUserRepository;
+    private final MongoUserRepository mongoUserRepository;
 
-    public UserRepositoryImpl(JpaUserRepository jpaUserRepository) {
-        this.jpaUserRepository = jpaUserRepository;
+    public UserRepositoryImpl(MongoUserRepository mongoUserRepository) {
+        this.mongoUserRepository = mongoUserRepository;
     }
 
     @Override
     public User findByEmail(String email) {
-        User userEntity = this.jpaUserRepository.findByEmail(email);
+        UserDetails userEntity = this.mongoUserRepository.findByEmail(email);
 
         return new User(
-                userEntity.getId(),
                 userEntity.getUsername(),
-                userEntity.getEmail(),
-                userEntity.getPassword(),
-                userEntity.getRole()
+                userEntity.getPassword()
         );
     }
 }

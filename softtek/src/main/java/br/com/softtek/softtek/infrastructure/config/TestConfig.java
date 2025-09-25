@@ -1,8 +1,8 @@
 package br.com.softtek.softtek.infrastructure.config;
 
-import br.com.softtek.softtek.adapters.outbound.jpa.entities.JpaUserEntity;
-import br.com.softtek.softtek.adapters.outbound.jpa.repositories.JpaUserRepository;
-import br.com.softtek.softtek.domain.user.UserRole;
+import br.com.softtek.softtek.adapters.outbound.jpa.entities.MongoUserEntity;
+import br.com.softtek.softtek.adapters.outbound.jpa.repositories.MongoUserRepository;
+import br.com.softtek.softtek.domain.user.enums.UserRole;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -13,21 +13,21 @@ import java.util.Arrays;
 @Profile("test")
 public class TestConfig {
 
-    private final JpaUserRepository jpaUserRepository;
+    private final MongoUserRepository mongoUserRepository;
 
-    public TestConfig(JpaUserRepository jpaUserRepository) {
-        this.jpaUserRepository = jpaUserRepository;
+    public TestConfig(MongoUserRepository mongoUserRepository) {
+        this.mongoUserRepository = mongoUserRepository;
     }
 
     @PostConstruct
     public void init() {
 
-        jpaUserRepository.deleteAll();
+        mongoUserRepository.deleteAll();
 
-        JpaUserEntity felipe = new JpaUserEntity("", "", "", "", UserRole.USER);
-        JpaUserEntity daniel = new JpaUserEntity("", "", "", "", UserRole.ADMIN);
-        JpaUserEntity douglas = new JpaUserEntity("", "", "", "", UserRole.USER);
+        MongoUserEntity felipe = new MongoUserEntity("", "", "", "", UserRole.USER);
+        MongoUserEntity daniel = new MongoUserEntity("", "", "", "", UserRole.ADMIN);
+        MongoUserEntity douglas = new MongoUserEntity("", "", "", "", UserRole.USER);
 
-        jpaUserRepository.saveAll(Arrays.asList(felipe, daniel, douglas));
+        mongoUserRepository.saveAll(Arrays.asList(felipe, daniel, douglas));
     }
 }
