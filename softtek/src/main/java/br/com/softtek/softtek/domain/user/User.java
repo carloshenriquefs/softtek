@@ -1,5 +1,7 @@
 package br.com.softtek.softtek.domain.user;
 
+import br.com.softtek.softtek.domain.user.enums.UserRole;
+
 public class User  {
 
     private String id;
@@ -9,6 +11,11 @@ public class User  {
     private UserRole role;
 
     public User() {
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     public User(String id, String username, String email, String password, UserRole role) {
