@@ -1,6 +1,6 @@
 package br.com.softtek.softtek.infrastructure.config.security;
 
-import br.com.softtek.softtek.domain.user.User;
+import br.com.softtek.softtek.adapters.outbound.jpa.entities.MongoUserEntity;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -12,26 +12,29 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import static br.com.softtek.softtek.infrastructure.constants.Messages.NOT_POSSIBLE_TO_GENERATE_TOKEN;
+
 @Service
 public class TokenService {
 
-    @Value("minha.chave.secreta")
+    @Value("${my.secret.key}")
     private String secretWord;
 
-    public String generateToken(User userRequestDTO){
+    public String generateToken(MongoUserEntity mongoUserEntity){
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretWord);
 
-            String token = JWT.create()
+            String token = JWT
+                    .create()
                     .withIssuer("softtek")
-                    .withSubject(userRequestDTO.getEmail())
+                    .withSubject(mongoUserEntity.getEmail())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
 
             return token;
         } catch (JWTCreationException e){
-            throw new RuntimeException("Não foi possível gerar o token!");
+            throw new RuntimeException(NOT_POSSIBLE_TO_GENERATE_TOKEN);
         }
 
     }
@@ -41,7 +44,8 @@ public class TokenService {
         Algorithm algorithm = Algorithm.HMAC256(secretWord);
 
         try {
-            return JWT.require(algorithm)
+            return JWT
+                    .require(algorithm)
                     .withIssuer("softtek")
                     .build()
                     .verify(token)
