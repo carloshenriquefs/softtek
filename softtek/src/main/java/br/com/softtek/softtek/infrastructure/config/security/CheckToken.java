@@ -1,6 +1,6 @@
 package br.com.softtek.softtek.infrastructure.config.security;
 
-import br.com.softtek.softtek.adapters.outbound.jpa.repositories.JpaUserRepository;
+import br.com.softtek.softtek.adapters.outbound.jpa.repositories.MongoUserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,11 +17,11 @@ import java.io.IOException;
 public class CheckToken extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-    private final JpaUserRepository usuarioRepository;
+    private final MongoUserRepository mongoUserRepository;
 
-    public CheckToken(TokenService tokenService, JpaUserRepository usuarioRepository) {
+    public CheckToken(TokenService tokenService, MongoUserRepository mongoUserRepository) {
         this.tokenService = tokenService;
-        this.usuarioRepository = usuarioRepository;
+        this.mongoUserRepository = mongoUserRepository;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class CheckToken extends OncePerRequestFilter {
         } else {
             token = authorizationHeader.replace("Bearer", "").trim();
             String login = tokenService.validateToken(token);
-            UserDetails user = (UserDetails) usuarioRepository.findByEmail(login);
+            UserDetails user = mongoUserRepository.findByEmail(login);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
