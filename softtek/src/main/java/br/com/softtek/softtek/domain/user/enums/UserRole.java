@@ -1,4 +1,4 @@
-package br.com.softtek.softtek.domain.user;
+package br.com.softtek.softtek.domain.user.enums;
 
 public enum UserRole {
     ADMIN("admin"),
