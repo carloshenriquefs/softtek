@@ -2,7 +2,6 @@ package com.saudemental.api.controller;
 
 import com.saudemental.api.model.dto.LoginRequest;
 import com.saudemental.api.model.dto.LoginResponse;
-import com.saudemental.api.model.dto.RefreshTokenRequest;
 import com.saudemental.api.model.dto.UserProfileDto;
 import com.saudemental.api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,15 +30,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/refresh")
-    @Operation(summary = "Renovar token", description = "Renova token de acesso usando refresh token")
-    public ResponseEntity<LoginResponse> refreshToken(@Valid @RequestBody RefreshTokenRequest request,
-                                                     HttpServletRequest httpRequest) {
-        String ipAddress = getClientIpAddress(httpRequest);
-        LoginResponse response = userService.refreshToken(request, ipAddress);
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/profile")
     @Operation(summary = "Obter perfil do usuário", description = "Retorna informações do perfil do usuário autenticado")
     public ResponseEntity<UserProfileDto> getProfile(Authentication authentication) {
@@ -49,8 +39,18 @@ public class AuthController {
 
     @PostMapping("/logout")
     @Operation(summary = "Realizar logout", description = "Invalida sessão do usuário")
-    public ResponseEntity<Void> logout(Authentication authentication, HttpServletRequest httpRequest) {
-        // Implementação de logout (invalidar token, auditoria, etc.)
+    public ResponseEntity<Void> logout(Authentication authentication,HttpServletRequest httpRequest) {
+        String ipAddress = getClientIpAddress(httpRequest);
+        String token = httpRequest.getHeader("Authorization").split(" ")[1];
+        if(token.isEmpty()){
+            return ResponseEntity.status(400).build();
+        }
+        try {
+            System.out.println(token);
+            userService.logout(token, ipAddress);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
         return ResponseEntity.ok().build();
     }
 

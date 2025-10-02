@@ -25,9 +25,6 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 
-    @Value("${jwt.refresh-expiration}")
-    private Long refreshExpiration;
-
     private SecretKey getSignInKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -47,10 +44,6 @@ public class JwtService {
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
-    }
-
-    public String generateRefreshToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {

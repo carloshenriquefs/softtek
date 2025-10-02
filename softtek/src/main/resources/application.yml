@@ -23,8 +23,7 @@ server:
 
 jwt:
   secret: ${JWT_SECRET:suaChaveSecretaMuitoSeguraComMaisDe256BitsParaTesteLocalhost123456789}
-  expiration: ${JWT_EXPIRATION:86400000} # 24 horas em ms
-  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 dias em ms
+  expiration: ${JWT_EXPIRATION:1800000} # 30 Min em ms
 
 logging:
   level:
@@ -39,7 +38,7 @@ logging:
 
 audit:
   enabled: true
-  retention-days: ${AUDIT_RETENTION_DAYS:2555} # 7 anos para conformidade NR-1
+  retention-days: ${AUDIT_RETENTION_DAYS:2555}
 
 management:
   endpoints:

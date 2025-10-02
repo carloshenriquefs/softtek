@@ -2,7 +2,6 @@ package com.saudemental.api.service;
 
 import com.saudemental.api.model.dto.LoginRequest;
 import com.saudemental.api.model.dto.LoginResponse;
-import com.saudemental.api.model.dto.RefreshTokenRequest;
 import com.saudemental.api.model.dto.UserProfileDto;
 import com.saudemental.api.model.entity.User;
 import com.saudemental.api.model.enums.AuditAction;
@@ -58,41 +57,23 @@ public class UserService implements UserDetailsService {
 
         UserDetails userDetails = loadUserByUsername(request.getEmail());
         String accessToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
 
         // Auditoria
         auditService.logAction(user.getId(), AuditAction.LOGIN, "auth", null, ipAddress, request.getDeviceInfo());
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .tokenType("Bearer")
-                .expiresIn(86400L) // 24 horas
                 .user(convertToDto(user))
                 .build();
     }
 
-    public LoginResponse refreshToken(RefreshTokenRequest request, String ipAddress) {
-        String email = jwtService.extractUsername(request.getRefreshToken());
+    public void logout(String token, String ipAddress) {
+        String email = jwtService.extractUsername(token);
         User user = userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        UserDetails userDetails = loadUserByUsername(email);
-
-        if (jwtService.isTokenValid(request.getRefreshToken(), userDetails)) {
-            String accessToken = jwtService.generateToken(userDetails);
-            String refreshToken = jwtService.generateRefreshToken(userDetails);
-
-            return LoginResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(86400L)
-                    .user(convertToDto(user))
-                    .build();
-        }
-
-        throw new RuntimeException("Token inválido");
+        // Auditoria
+        auditService.logAction(user.getId(), AuditAction.LOGOUT, "auth", null, ipAddress, null);
     }
 
     public UserProfileDto getUserProfile(String email) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 public class AuditService {
 
     private final AuditLogRepository auditLogRepository;
+    private static final ZoneId ZONE_ID = ZoneId.of("America/Sao_Paulo");
 
     @Value("${audit.retention-days}")
     private Integer retentionDays;
@@ -36,12 +38,13 @@ public class AuditService {
                          String ipAddress, String userAgent, Object oldValue, Object newValue,
                          Map<String, Object> metadata) {
         try {
+            System.out.println(LocalDateTime.now(ZONE_ID));
             AuditLog auditLog = AuditLog.builder()
                     .userId(userId)
                     .action(action)
                     .resource(resource)
                     .resourceId(resourceId)
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDateTime.now(ZONE_ID))
                     .ipAddress(ipAddress)
                     .userAgent(userAgent)
                     .oldValue(oldValue)
