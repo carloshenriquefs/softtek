@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://admin:Pg%230109T%40@localhost:27017/saude_mental?authSource=admin}
+      uri: ${MONGODB_URI:mongodb://admin:password123@localhost:27017/saude_mental?authSource=admin}
       auto-index-creation: true
 
   security:

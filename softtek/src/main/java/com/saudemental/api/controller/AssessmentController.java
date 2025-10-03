@@ -67,8 +67,7 @@ public class AssessmentController {
     }
 
     private String getUserIdFromAuthentication(Authentication authentication) {
-        // Em implementação real, extrair ID do usuário do token JWT
-        return authentication.getName(); // Simplificado para este exemplo
+        return authentication.getName();
     }
 
     private String getClientIpAddress(HttpServletRequest request) {

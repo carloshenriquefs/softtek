@@ -49,14 +49,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        // Endpoints públicos de autenticação
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/register").hasRole("ADMIN")
-                        // Outros endpoints públicos
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        // Todos os outros endpoints precisam de autenticação
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
