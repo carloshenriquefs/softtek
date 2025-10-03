@@ -1,41 +1,118 @@
-version: '3.8'
+spring:
+  application:
+    name: saude-mental-api
+    version: 1.0.0
 
-services:
-  mongodb:
-    image: mongo:7.0
-    container_name: saude-mental-mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: saude_mental
-    volumes:
-      - mongodb_data:/data/db
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-    networks:
-      - saude-mental-network
+  main:
+    allow-circular-references: true
 
-  mongo-express:
-    image: mongo-express:latest
-    container_name: saude-mental-mongo-express
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
-      ME_CONFIG_BASICAUTH: false
-    depends_on:
-      - mongodb
-    networks:
-      - saude-mental-network
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://admin:password123@localhost:27017/saude_mental?authSource=admin}
+      auto-index-creation: true
 
-volumes:
-  mongodb_data:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080}
 
-networks:
-  saude-mental-network:
-    driver: bridge
+  # Cache configuration
+  cache:
+    type: simple # Use Redis em produção
+    cache-names: questions,resources,users
+    caffeine:
+      spec: maximumSize=500,expireAfterAccess=10m
+
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api/v1
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+  error:
+    include-stacktrace: never # Nunca expor stack traces em produção
+    include-message: always
+
+jwt:
+  secret: ${JWT_SECRET:suaChaveSecretaMuitoSeguraComMaisDe256BitsParaTesteLocalhost123456789}
+  expiration: ${JWT_EXPIRATION:1800000} # 30 min em ms
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000} # 7 dias em ms
+
+# Configuração de criptografia
+encryption:
+  secret-key: ${ENCRYPTION_KEY:dGVzdGVLZXlCYXNlNjRFbmNvZGVkRm9yRGV2ZWxvcG1lbnRPbmx5MTIzNDU2Nzg5MA==}
+  # IMPORTANTE: Em produção, use KMS (AWS KMS, Azure Key Vault, etc.)
+
+logging:
+  level:
+    root: INFO
+    com.saudemental.api: INFO
+    org.springframework.security: WARN
+    org.springframework.data.mongodb: WARN
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{userId}] [%X{requestId}] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{userId}] [%X{requestId}] %logger{36} - %msg%n"
+  file:
+    name: logs/saude-mental-api.log
+    max-size: 10MB
+    max-history: 30
+    total-size-cap: 1GB
+
+audit:
+  enabled: true
+  retention-days: ${AUDIT_RETENTION_DAYS:2555} # ~7 anos para NR-1
+  log-sensitive-data: false # Nunca logar dados sensíveis em produção
+
+# Actuator - Monitoramento e Health Checks
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,auditevents
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  health:
+    mongo:
+      enabled: true
+    diskspace:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${ENVIRONMENT:development}
+
+# Informações da aplicação
+info:
+  app:
+    name: ${spring.application.name}
+    version: ${spring.application.version}
+    description: API Sistema de Saúde Mental - Conformidade NR-1
+    contact:
+      name: Equipe de Desenvolvimento
+      email: suporte@empresa.com
+
+# Configurações de segurança adicionais
+security:
+  headers:
+    content-security-policy: "default-src 'self'"
+    x-frame-options: DENY
+    x-content-type-options: nosniff
+    x-xss-protection: "1; mode=block"
+
+# Limites de requisição
+server:
+  tomcat:
+    max-connections: 10000
+    max-threads: 200
+    accept-count: 100
+    connection-timeout: 20000
