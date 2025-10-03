@@ -51,8 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         // Endpoints públicos de autenticação
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/refresh").permitAll()
-                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/register").hasRole("ADMIN")
                         // Outros endpoints públicos
                         .requestMatchers("/health").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
