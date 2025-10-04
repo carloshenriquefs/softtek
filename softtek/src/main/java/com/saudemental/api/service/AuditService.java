@@ -55,7 +55,6 @@ public class AuditService {
                     .build();
 
             auditLogRepository.save(auditLog);
-
             log.info("Audit log created: userId={}, action={}, resource={}, resourceId={}",
                     userId, action, resource, resourceId);
 
