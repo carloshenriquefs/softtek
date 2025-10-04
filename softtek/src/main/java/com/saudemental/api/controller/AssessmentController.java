@@ -19,13 +19,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/assessments")
 @RequiredArgsConstructor
-@Tag(name = "Avaliações", description = "Endpoints para avaliações de saúde mental")
+@Tag(name = "Avaliações - v1", description = "API de avaliações de saúde mental (Versão 1)")
 public class AssessmentController {
 
     private final AssessmentService assessmentService;
 
     @GetMapping("/questions")
-    @Operation(summary = "Obter perguntas", description = "Retorna perguntas para avaliação por categoria")
+    @Operation(
+            summary = "Obter perguntas",
+            description = "Retorna perguntas para avaliação por categoria (API v1)"
+    )
     public ResponseEntity<List<Question>> getQuestions(
             @Parameter(description = "Categoria da avaliação (opcional)")
             @RequestParam(required = false) String category) {
@@ -34,7 +37,10 @@ public class AssessmentController {
     }
 
     @PostMapping
-    @Operation(summary = "Submeter avaliação", description = "Submete uma nova avaliação de saúde mental")
+    @Operation(
+            summary = "Submeter avaliação",
+            description = "Submete uma nova avaliação de saúde mental (API v1)"
+    )
     public ResponseEntity<AssessmentResponse> submitAssessment(
             @Valid @RequestBody AssessmentRequest request,
             Authentication authentication,
@@ -48,7 +54,10 @@ public class AssessmentController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar avaliações do usuário", description = "Retorna histórico de avaliações do usuário autenticado")
+    @Operation(
+            summary = "Listar avaliações do usuário",
+            description = "Retorna histórico de avaliações do usuário autenticado (API v1)"
+    )
     public ResponseEntity<List<AssessmentResponse>> getUserAssessments(Authentication authentication) {
         String userId = getUserIdFromAuthentication(authentication);
         List<AssessmentResponse> assessments = assessmentService.getUserAssessments(userId);
@@ -56,7 +65,10 @@ public class AssessmentController {
     }
 
     @GetMapping("/{assessmentId}")
-    @Operation(summary = "Obter avaliação específica", description = "Retorna detalhes de uma avaliação específica")
+    @Operation(
+            summary = "Obter avaliação específica",
+            description = "Retorna detalhes de uma avaliação específica (API v1)"
+    )
     public ResponseEntity<AssessmentResponse> getAssessment(
             @PathVariable String assessmentId,
             Authentication authentication) {

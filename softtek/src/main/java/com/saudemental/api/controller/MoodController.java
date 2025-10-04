@@ -1,5 +1,5 @@
-
 package com.saudemental.api.controller;
+
 import com.saudemental.api.model.dto.MoodEntryRequest;
 import com.saudemental.api.model.dto.MoodEntryResponse;
 import com.saudemental.api.service.MoodService;
@@ -13,17 +13,23 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 @RestController
 @RequestMapping("/moods")
 @RequiredArgsConstructor
-@Tag(name = "Humor", description = "Endpoints para registro de humor")
+@Tag(name = "Humor - v1", description = "API de registro de humor (Versão 1)")
 public class MoodController {
+
     private final MoodService moodService;
 
     @PostMapping
-    @Operation(summary = "Registrar humor", description = "Registra o humor do usuário")
+    @Operation(
+            summary = "Registrar humor",
+            description = "Registra o humor do usuário (API v1)"
+    )
     public ResponseEntity<MoodEntryResponse> saveMoodEntry(
             @Valid @RequestBody MoodEntryRequest request,
             Authentication authentication,
@@ -37,7 +43,10 @@ public class MoodController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar registros de humor", description = "Retorna histórico de humor do usuário")
+    @Operation(
+            summary = "Listar registros de humor",
+            description = "Retorna histórico de humor do usuário (API v1)"
+    )
     public ResponseEntity<List<MoodEntryResponse>> getMoodEntries(
             Authentication authentication,
             @Parameter(description = "Número de registros (opcional)")
@@ -53,7 +62,10 @@ public class MoodController {
     }
 
     @GetMapping("/range")
-    @Operation(summary = "Listar humor por período", description = "Retorna humor do usuário em um período específico")
+    @Operation(
+            summary = "Listar humor por período",
+            description = "Retorna humor do usuário em um período específico (API v1)"
+    )
     public ResponseEntity<List<MoodEntryResponse>> getMoodEntriesByDateRange(
             Authentication authentication,
             @Parameter(description = "Data inicial")
@@ -68,7 +80,10 @@ public class MoodController {
     }
 
     @GetMapping("/count")
-    @Operation(summary = "Contar registros", description = "Retorna quantidade de registros desde uma data")
+    @Operation(
+            summary = "Contar registros",
+            description = "Retorna quantidade de registros desde uma data (API v1)"
+    )
     public ResponseEntity<Long> getMoodCount(
             Authentication authentication,
             @Parameter(description = "Data inicial")

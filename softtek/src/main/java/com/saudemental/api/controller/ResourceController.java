@@ -16,13 +16,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/resources")
 @RequiredArgsConstructor
-@Tag(name = "Recursos", description = "Endpoints para recursos de saúde mental")
+@Tag(name = "Recursos - v1", description = "API de recursos de saúde mental (Versão 1)")
 public class ResourceController {
 
     private final ResourceRepository resourceRepository;
 
     @GetMapping
-    @Operation(summary = "Listar recursos", description = "Retorna lista de recursos disponíveis")
+    @Operation(
+            summary = "Listar recursos",
+            description = "Retorna lista de recursos disponíveis (API v1)"
+    )
     public ResponseEntity<List<Resource>> getResources(
             @RequestParam(required = false) ResourceType type,
             @RequestParam(required = false) AssessmentCategory category,
@@ -47,7 +50,10 @@ public class ResourceController {
     }
 
     @GetMapping("/{resourceId}")
-    @Operation(summary = "Obter recurso específico", description = "Retorna detalhes de um recurso específico")
+    @Operation(
+            summary = "Obter recurso específico",
+            description = "Retorna detalhes de um recurso específico (API v1)"
+    )
     public ResponseEntity<Resource> getResource(@PathVariable String resourceId) {
         Resource resource = resourceRepository.findById(resourceId)
                 .orElseThrow(() -> new RuntimeException("Recurso não encontrado"));

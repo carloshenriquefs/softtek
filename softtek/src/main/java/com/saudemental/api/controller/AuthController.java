@@ -16,37 +16,52 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Autenticação", description = "Endpoints para autenticação e autorização")
+@Tag(name = "Autenticação - v1", description = "API de autenticação e autorização (Versão 1)")
 public class AuthController {
 
     private final UserService userService;
 
     @PostMapping("/login")
-    @Operation(summary = "Realizar login", description = "Autentica usuário e retorna tokens de acesso")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
-                                              HttpServletRequest httpRequest) {
+    @Operation(
+            summary = "Realizar login",
+            description = "Autentica usuário e retorna tokens de acesso (API v1)"
+    )
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest) {
         String ipAddress = getClientIpAddress(httpRequest);
         LoginResponse response = userService.authenticate(request, ipAddress);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/profile")
-    @Operation(summary = "Obter perfil do usuário", description = "Retorna informações do perfil do usuário autenticado")
+    @Operation(
+            summary = "Obter perfil do usuário",
+            description = "Retorna informações do perfil do usuário autenticado (API v1)"
+    )
     public ResponseEntity<UserProfileDto> getProfile(Authentication authentication) {
         UserProfileDto profile = userService.getUserProfile(authentication.getName());
         return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/logout")
-    @Operation(summary = "Realizar logout", description = "Invalida sessão do usuário")
-    public ResponseEntity<Void> logout(Authentication authentication,HttpServletRequest httpRequest) {
+    @Operation(
+            summary = "Realizar logout",
+            description = "Invalida sessão do usuário (API v1)"
+    )
+    public ResponseEntity<Void> logout(
+            Authentication authentication,
+            HttpServletRequest httpRequest) {
         String ipAddress = getClientIpAddress(httpRequest);
-        String token = httpRequest.getHeader("Authorization").split(" ")[1];
-        if(token.isEmpty()){
+        String authHeader = httpRequest.getHeader("Authorization");
+
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(400).build();
         }
+
+        String token = authHeader.substring(7);
+
         try {
-            System.out.println(token);
             userService.logout(token, ipAddress);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
